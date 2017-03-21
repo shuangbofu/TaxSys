@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.BlackHumour.TaxSys.reply.dao.ReplyMapper" >
+  <resultMap id="replyResultMap" type="cn.BlackHumour.TaxSys.reply.entity.Reply" >
+    <id column="reply_id" property="replyId" jdbcType="VARCHAR" />
+    <result column="c_id" property="cId" jdbcType="VARCHAR" />
+    <result column="reply_er" property="replyEr" jdbcType="VARCHAR" />
+    <result column="reply_dept" property="replyDept" jdbcType="VARCHAR" />
+    <result column="reply_time" property="replyTime" jdbcType="TIMESTAMP" />
+    <result column="reply_content" property="replyContent" jdbcType="VARCHAR" />
+    
+    <association property="complain" javaType="cn.BlackHumour.TaxSys.complain.entity.Complain">
+    	<id column="c_id" property="cId" jdbcType="VARCHAR" />
+	   	<result column="c_company" property="cCompany" jdbcType="VARCHAR" />
+	   	<result column="c_mobile" property="cMobile" jdbcType="VARCHAR" />
+	  	<result column="c_state" property="cState" jdbcType="VARCHAR" />
+	  	<result column="c_isNM" property="cIsnm" jdbcType="BIT" />
+	 	<result column="c_time" property="cTime" jdbcType="TIMESTAMP" />
+	 	<result column="c_title" property="cTitle" jdbcType="VARCHAR" />
+	 	<result column="c_toName" property="cToname" jdbcType="VARCHAR" />
+	   	<result column="c_todept" property="cTodept" jdbcType="VARCHAR" />
+	   	<result column="c_name" property="cName" jdbcType="VARCHAR" />
+    </association>
+    <association property="replyDept" javaType="cn.BlackHumour.TaxSys.dept.entity.Dept">
+    	<id column="d_id" property="dId" jdbcType="VARCHAR" />
+   		<result column="d_name" property="dName" jdbcType="VARCHAR" />
+    </association>
+  </resultMap>
+  
+  <insert id="insert" parameterType="Reply" >
+   insert into reply (reply_id, c_id, reply_er, 
+      reply_dept, reply_time, reply_content
+      )
+    values (#{replyId,jdbcType=VARCHAR}, #{cId,jdbcType=VARCHAR}, #{replyEr,jdbcType=VARCHAR}, 
+      #{replyDept.dId,jdbcType=VARCHAR}, #{replyTime,jdbcType=TIMESTAMP}, #{replyContent,jdbcType=VARCHAR}
+      )
+  </insert>
+  
+  
+  <select id="selectAll" resultMap="replyResultMap">
+  	select reply_id, c_id, reply_er, d.d_name,d.d_id,
+      reply_dept, reply_time, reply_content
+      from reply as r
+      left join dept as d on r.reply_dept = d.d_id 
+      order by reply_time asc
+  </select>
+  
+</mapper>

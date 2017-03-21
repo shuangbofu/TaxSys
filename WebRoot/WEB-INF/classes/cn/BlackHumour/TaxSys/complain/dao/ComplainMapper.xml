@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.BlackHumour.TaxSys.complain.dao.ComplainMapper" >
+  <resultMap id="complainResultMap" type="cn.BlackHumour.TaxSys.complain.entity.Complain" >
+    <id column="c_id" property="cId" jdbcType="VARCHAR" />
+    <result column="c_company" property="cCompany" jdbcType="VARCHAR" />
+    <result column="c_mobile" property="cMobile" jdbcType="VARCHAR" />
+    <result column="c_state" property="cState" jdbcType="VARCHAR" />
+    <result column="c_isNM" property="cIsnm" jdbcType="BIT" />
+    <result column="c_time" property="cTime" jdbcType="TIMESTAMP" />
+    <result column="c_title" property="cTitle" jdbcType="VARCHAR" />
+    <result column="c_toName" property="cToname" jdbcType="VARCHAR" />
+    <result column="c_name" property="cName" jdbcType="VARCHAR" />
+    <result column="c_content" property="cContent"/>
+    <result column="c_replycount" property="cReplyCount"/>
+     <association property="cTodept" javaType="cn.BlackHumour.TaxSys.dept.entity.Dept">
+    	<id column="d_id" property="dId" jdbcType="VARCHAR" />
+   		<result column="d_name" property="dName" jdbcType="VARCHAR" />
+    </association>
+    <collection property="replies" ofType="cn.BlackHumour.TaxSys.reply.entity.Reply" >
+    	<result column="c_id" property="cId" jdbcType="VARCHAR" />
+		<result column="reply_er" property="replyEr" jdbcType="VARCHAR" />
+		<result column="reply_dept" property="replyDept" jdbcType="VARCHAR" />
+		<result column="reply_time" property="replyTime" jdbcType="TIMESTAMP" />
+		<result column="reply_content" property="replyContent" jdbcType="VARCHAR" />
+    </collection>
+  </resultMap> 
+ 
+ 
+ 
+ <select id="selectPageList" parameterType="Page" resultMap="complainResultMap">
+ 	select c_id, c_company, c_mobile, c_replycount,
+      c_state, c_isNM, c_time, 
+      c_title, c_toName, c_todept,
+      c_name, c_content,
+      d.d_id, d.d_name
+    from complain as c left join dept as d on c.c_todept = d.d_id 
+    <where>
+		<if test="keyEntity.cTitle!=null">
+			and c_title like "%"#{keyEntity.cTitle}"%"
+		</if> 
+		<if test="keyEntity.cState!=null">
+			and c_state like "%"#{keyEntity.cState}"%"
+		</if>
+	</where>
+	limit #{startIndex},#{pageSize}
+ </select>
+ 
+ <select id="selectRecordsCount" resultType="Int">
+ 	select count(1) from complain
+ 	<where>
+		<if test="keyEntity.cTitle!=null">
+			and c_title like "%"#{keyEntity.cTitle}"%"
+		</if> 
+		<if test="keyEntity.cState!=null">
+			and c_state like "%"#{keyEntity.cState}"%"
+		</if>
+	</where>
+  </select>
+  
+  <select id="select" parameterType="String" resultMap="complainResultMap">
+  	select c_id, c_company, c_mobile, c_replycount,
+      c_state, c_isNM, c_time, 
+      c_title, c_toName, c_todept, 
+      c_name, c_content, d.d_id, d.d_name 
+    from complain as c
+    left join dept as d on c.c_todept = d.d_id 
+    where c_id = #{cId}
+  </select>
+  
+  <update id="update" parameterType="String">
+  	update complain
+    set 
+     <!--  c_company = #{cCompany,jdbcType=VARCHAR},
+      c_mobile = #{cMobile,jdbcType=VARCHAR}, -->
+      c_state = #{cState,jdbcType=VARCHAR},
+    <!--   c_isNM = #{cIsnm,jdbcType=BIT},
+      c_time = #{cTime,jdbcType=TIMESTAMP},
+      c_title = #{cTitle,jdbcType=VARCHAR},
+      c_toName = #{cToname,jdbcType=VARCHAR},
+      c_todept = #{cTodept.dId,jdbcType=VARCHAR},
+      c_name = #{cName,jdbcType=VARCHAR},
+      c_content = #{cContent,jdbcType=LONGVARCHAR} -->
+      c_replycount = #{cReplyCount}
+   where c_id = #{cId,jdbcType=VARCHAR}
+  </update>
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!-- 通过别名简化对类的使用 -->
+<typeAliases>
+	<!-- 
+	通过package，可以直接指定package的名字，mybatis会自动扫描指定
+	包下面的javabean，并且默认设置第一个别名，默认的名字为非限定类名来作
+	为它的类名
+	 -->
+	<package name="cn.BlackHumour.TaxSys.core.entity"/>
+	<package name="cn.BlackHumour.TaxSys.user.entity"/>
+	<package name="cn.BlackHumour.TaxSys.role.entity"/>
+	<package name="cn.BlackHumour.TaxSys.privilege.entity"/>
+	<package name="cn.BlackHumour.TaxSys.info.entity"/>
+	<package name="cn.BlackHumour.TaxSys.dept.entity"/>
+	<package name="cn.BlackHumour.TaxSys.complain.entity"/>
+	<package name="cn.BlackHumour.TaxSys.reply.entity"/>
+</typeAliases>
+	
+	<!-- <mappers>
+		<mapper resource="cn/BlackHumour/scm/entity/DeptMapper.xml"/>
+	</mappers> -->
+
+</configuration>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.BlackHumour.TaxSys.core.dao.AdminMapper">
+  <resultMap id="adminResultMap" type="cn.BlackHumour.TaxSys.core.entity.Admin">
+    <id column="ad_id" jdbcType="INTEGER" property="id" />
+    <result column="ad_name" jdbcType="VARCHAR" property="name" />
+    <result column="ad_password" jdbcType="VARCHAR" property="password" />
+  </resultMap>
+  
+  <!-- 用户登录 -->
+  <select id="login" parameterType="Admin" resultMap="adminResultMap">
+  	select * from admin where ad_name=#{name} and ad_password = #{password};
+  </select>
+  
+  
+  
+  <insert id="insert" parameterType="Admin">
+  	insert into admin(ad_id,ad_name,ad_password) values(#{id},#{name},#{password});
+  </insert>
+</mapper>

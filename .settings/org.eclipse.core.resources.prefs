@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+encoding//WebRoot/index.jsp=UTF-8
+encoding//WebRoot/js/common.js=UTF-8
+encoding//WebRoot/js/ueditor=UTF-8
+encoding//WebRoot/jsp/role/insert.jsp=UTF-8
+encoding//config/projectSql.sql=UTF-8
+encoding//src/cn/BlackHumour/TaxSys/core/action/AdminAction.java=UTF-8
+encoding//src/cn/BlackHumour/TaxSys/core/dao/BaseMapper.java=UTF-8
+encoding//src/cn/BlackHumour/TaxSys/user/dao/UserMapper.xml=UTF-8
+encoding//src/cn/BlackHumour/TaxSys/user/service/UserService.java=UTF-8
+encoding/<project>=UTF-8
+encoding/WebRoot=UTF-8
+encoding/src=UTF-8

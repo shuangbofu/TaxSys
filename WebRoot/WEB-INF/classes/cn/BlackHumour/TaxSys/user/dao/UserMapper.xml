@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.BlackHumour.TaxSys.user.dao.UserMapper" >
+  <resultMap id="userResultMap" type="cn.BlackHumour.TaxSys.user.entity.User" >
+    <id column="u_id" property="uId" jdbcType="VARCHAR" />
+    <!-- <result column="u_dept" property="uDept" jdbcType="VARCHAR" /> -->
+    <result column="u_account" property="uAccount" jdbcType="VARCHAR" />
+    <result column="u_name" property="uName" jdbcType="VARCHAR" />
+    <result column="u_password" property="uPassword" jdbcType="VARCHAR" />
+    <result column="u_headImg" property="uHeadimg" jdbcType="VARCHAR" />
+    <result column="u_gender" property="uGender" jdbcType="BIT" />
+    <result column="u_state" property="uState" jdbcType="VARCHAR" />
+    <result column="u_mobile" property="uMobile" jdbcType="VARCHAR" />
+    <result column="u_email" property="uEmail" jdbcType="VARCHAR" />
+    <result column="u_birthday" property="uBirthday" jdbcType="DATE" />
+    <result column="u_memo" property="uMemo" jdbcType="VARCHAR" />
+    
+    <association property="uRole" javaType="cn.BlackHumour.TaxSys.role.entity.Role">
+    	<id column="r_id" property="rId" jdbcType="VARCHAR" />
+    	<result column="r_name" property="rName" jdbcType="VARCHAR" />
+    	<result column="r_state" property="rState" jdbcType="BIT" />
+    </association>
+    <association property="uDept" javaType="cn.BlackHumour.TaxSys.dept.entity.Dept">
+    	<id column="d_id" property="dId" jdbcType="VARCHAR" />
+   		<result column="d_name" property="dName" jdbcType="VARCHAR" />
+    </association>
+  </resultMap>
+  
+  <!-- 登录 -->
+  <select id="login" parameterType="User" resultMap="userResultMap">
+  	select 
+ 		u.u_id, d.d_id, d.d_name, r.r_name, r.r_id, r.r_state, u.u_account, 
+	    u.u_name, u.u_password, u.u_headImg, 
+	    u.u_gender, u.u_state, u.u_mobile, 
+	    u.u_email, u.u_birthday, u.u_memo,p.p_name 
+	    
+ 		from user as u left join role as r on u.u_role = r.r_id 
+ 		left join dept as d on u.u_dept = d.d_id 
+ 		left join privilege as p on p.p_code = r.r_id
+      where u_account = #{uAccount} and u_password = #{uPassword}
+  </select>
+  
+   <!-- 通过分页查询，返回数据集 -->
+   <select id="selectPageList" parameterType="Page" resultMap="userResultMap">
+ 		select 
+ 		u.u_id, d.d_name, r.r_name, u.u_account,
+	    u.u_name, u.u_password, u.u_headImg, 
+	    u.u_gender, u.u_state, u.u_mobile, 
+	    u.u_email, u.u_birthday, u.u_memo
+	    
+ 		from user as u left join role as r on u.u_role = r.r_id 
+ 		left join dept as d on u.u_dept = d.d_id 
+ 		<!-- <where>
+			<if test="key!=null">
+				<if test="keyField=='uName'">
+					and u_name like #{key}
+				</if>
+				<if test="keyField=='uAccount'">
+					and u_account like #{key}
+				</if>
+				<if test="keyField=='uEmail'">
+					and u_email like #{key}
+				</if>
+				<if test="keyField=='uMobile'">
+					and u_mobile like #{key}
+				</if>
+				<if test="keyField=='uBirthday'">
+					and u_birthday like #{key}
+				</if>
+				<if test="keyField=='uMemo'">
+					and u_memo like #{key}
+				</if>
+			</if> 
+ 		</where> -->
+ 		<where>
+ 			<if test="keyEntity.uName!=null">
+ 				and u_name like "%"#{keyEntity.uName}"%"
+ 			</if>
+ 			<if test="keyEntity.uAccount!=null">
+ 				and u_account like "%"#{keyEntity.uAccount}"%"
+ 			</if>
+ 			<if test="keyEntity.uEmail!=null">
+ 				and u_email like "%"#{keyEntity.uEmail}"%"
+ 			</if>
+ 			<if test="keyEntity.uBirthday!=null">
+ 				and u_birthday like "%"#{keyEntity.uBirthday}"%"
+ 			</if>
+ 			<if test="keyEntity.uMobile!=null">
+ 				and u_mobile like "%"#{keyEntity.uMobile}"%"
+ 			</if>
+ 			<if test="keyEntity.uMemo!=null">
+ 				and u_memo like "%"#{keyEntity.uMemo}"%"
+ 			</if>
+ 			<if test="keyEntity.uState!=null">
+ 				and u_state = #{keyEntity.uState}
+ 			</if>
+ 			<if test="keyEntity.uDept!=null">
+ 				and u_dept like "%"#{keyEntity.uDept.dId}"%"
+ 			</if>
+ 		</where>
+ 		order by u.u_account asc
+ 		limit #{startIndex},#{pageSize}
+ 	</select>
+ 	
+ 	<!-- 通过关键字分页查询，返回总记录数 -->
+ 	<select id="selectRecordsCount" parameterType="Page" resultType="Integer">
+ 		select count(1) from user
+		<!-- <where>
+			<if test="key!=null">
+				<if test="keyField=='uName'">
+					and u_name like #{key}
+				</if>
+				<if test="keyField=='uAccount'">
+					and u_account like #{key}
+				</if>
+				<if test="keyField=='uEmail'">
+					and u_email like #{key}
+				</if>
+				<if test="keyField=='uMobile'">
+					and u_mobile like #{key}
+				</if>
+				<if test="keyField=='uBirthday'">
+					and u_birthday like #{key}
+				</if>
+				<if test="keyField=='uMemo'">
+					and u_memo like #{key}
+				</if>
+			</if> 
+ 		</where> -->
+ 		<where>
+ 			<if test="keyEntity.uName!=null">
+ 				and u_name like "%"#{keyEntity.uName}"%"
+ 			</if>
+ 			<if test="keyEntity.uAccount!=null">
+ 				and u_account like "%"#{keyEntity.uAccount}"%"
+ 			</if>
+ 			<if test="keyEntity.uEmail!=null">
+ 				and u_email like "%"#{keyEntity.uEmail}"%"
+ 			</if>
+ 			<if test="keyEntity.uBirthday!=null">
+ 				and u_birthday like "%"#{keyEntity.uBirthday}"%"
+ 			</if>
+ 			<if test="keyEntity.uMobile!=null">
+ 				and u_mobile like "%"#{keyEntity.uMobile}"%"
+ 			</if>
+ 			<if test="keyEntity.uMemo!=null">
+ 				and u_memo like "%"#{keyEntity.uMemo}"%"
+ 			</if>
+ 			<if test="keyEntity.uState!=null">
+ 				and u_state = #{keyEntity.uState} 
+ 			</if>
+ 			<if test="keyEntity.uDept!=null">
+ 				and u_dept like "%"#{keyEntity.uDept.dId}"%"
+ 			</if>
+ 		</where>
+ 	</select>
+ 	
+  
+  <!-- 根据主键删除单个对象 -->
+  <delete id="delete" parameterType="String" >
+    delete from user
+    where u_id = #{uId,jdbcType=VARCHAR}
+  </delete>
+  
+ <!-- 新增单个对象 -->
+  <insert id="insert" parameterType="User" >
+    insert into user (u_id, u_dept, u_account, 
+      u_name, u_password, u_headImg, 
+      u_gender, u_state, u_mobile, 
+      u_email, u_birthday, u_memo, u_role
+      )
+    values (#{uId,jdbcType=INTEGER}, #{uDept.dId,jdbcType=VARCHAR}, #{uAccount,jdbcType=VARCHAR}, 
+      #{uName,jdbcType=VARCHAR}, #{uPassword,jdbcType=VARCHAR}, #{uHeadimg,jdbcType=VARCHAR}, 
+      #{uGender,jdbcType=BIT}, #{uState,jdbcType=VARCHAR}, #{uMobile,jdbcType=VARCHAR}, 
+      #{uEmail,jdbcType=VARCHAR}, #{uBirthday,jdbcType=DATE}, #{uMemo,jdbcType=VARCHAR},#{uRole.rId,jdbcType=VARCHAR}
+      )
+  </insert>
+ <!-- 根据主键更新单个对象 -->
+  <update id="update" parameterType="String" >
+    update user
+    set u_dept = #{uDept.dId,jdbcType=VARCHAR},
+      u_account = #{uAccount,jdbcType=VARCHAR},
+      u_name = #{uName,jdbcType=VARCHAR},
+      u_password = #{uPassword,jdbcType=VARCHAR},
+      u_headImg = #{uHeadimg,jdbcType=VARCHAR},
+      u_gender = #{uGender,jdbcType=BIT},
+      u_state = #{uState,jdbcType=VARCHAR},
+      u_mobile = #{uMobile,jdbcType=VARCHAR},
+      u_email = #{uEmail,jdbcType=VARCHAR},
+      u_birthday = #{uBirthday,jdbcType=DATE},
+      u_memo = #{uMemo,jdbcType=VARCHAR},
+      u_role = #{uRole.rId,jdbcType=VARCHAR}
+    where u_id = #{uId,jdbcType=VARCHAR}
+  </update>
+  
+  <!-- 根据主键查询单个对象 -->
+  <select id="select" resultMap="userResultMap" parameterType="String" >
+    select u.u_id, d.d_name, d.d_id, r.r_id, r.r_name, r.r_state, u.u_account, 
+	    u.u_name, u.u_password, u.u_headImg, 
+	    u.u_gender, u.u_state, u.u_mobile, 
+	    u.u_email, u.u_birthday, u.u_memo
+    from user as u left join role as r on u.u_role = r.r_id 
+ 		left join dept as d on u.u_dept = d.d_id 
+    where u_id = #{uId,jdbcType=VARCHAR}
+  </select>
+  
+  
+  <!-- 根据账号和主键校验账号 -->
+  <select id="selectByAccountAndId" parameterType="User" resultMap="userResultMap">
+  	  select u_id, u_dept, u_account, 
+      u_name, u_password, u_headImg, 
+      u_gender, u_state, u_mobile, 
+      u_email, u_birthday, u_memo
+    from user
+    where u_account = #{uAccount,jdbcType=VARCHAR}
+    <if test="uId!=null">
+    	and u_id != #{uId}
+    </if>
+    ;
+  </select>
+  
+  <!-- 根据主键数组批量删除 -->
+  <delete id="deleteAll">
+  	delete from user where u_id in 
+  	<foreach collection="array" open="(" close=")" separator="," item="deletedUsers">
+  		#{deletedUsers}
+  	</foreach>
+  </delete>
+  
+  
+  
+  
+  
+  <!-- 根据关键字查询单个对象 -->
+ <!--  <select id="selectBykey" parameterType="String" resultMap="userResultMap">
+	select u_id, u_dept, u_account, 
+      u_name, u_password, u_headImg, 
+      u_gender, u_state, u_mobile, 
+      u_email, u_birthday, u_memo
+     from user where u_name like #{key};
+  </select> -->
+  
+  <!-- 查询所有对象列表 -->
+ <!--  <select id="selectAll" resultMap="userResultMap">
+  	select u_id, u_dept, u_account, 
+      u_name, u_password, u_headImg, 
+      u_gender, u_state, u_mobile, 
+      u_email, u_birthday, u_memo
+     from user;
+  </select> -->
+ 
+</mapper>

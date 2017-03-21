@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.BlackHumour.TaxSys.info.dao.InfoMapper" >
+  <resultMap id="infoResultMap" type="cn.BlackHumour.TaxSys.info.entity.Info" >
+    <id column="i_id" property="iId" jdbcType="VARCHAR" />
+    <result column="i_type" property="iType" jdbcType="VARCHAR" />
+    <result column="i_source" property="iSource" jdbcType="VARCHAR" />
+    <result column="i_title" property="iTitle" jdbcType="VARCHAR" />
+    <result column="i_content" property="iContent" jdbcType="VARCHAR" />
+    <result column="i_memo" property="iMemo" jdbcType="VARCHAR" />
+    <result column="i_creator" property="iCreator" jdbcType="VARCHAR" />
+    <result column="i_createtime" property="iCreatetime" jdbcType="TIMESTAMP" />
+    <result column="i_state" property="iState" jdbcType="BIT" />
+  </resultMap>
+  
+  <insert id="insert" parameterType="Info">
+  	insert into info (i_id, i_type, i_source, 
+      i_title, i_content, i_memo, 
+      i_creator, i_createtime, i_state
+      )
+    values (#{iId,jdbcType=VARCHAR}, #{iType,jdbcType=VARCHAR}, #{iSource,jdbcType=VARCHAR}, 
+      #{iTitle,jdbcType=VARCHAR}, #{iContent,jdbcType=VARCHAR}, #{iMemo,jdbcType=VARCHAR}, 
+      #{iCreator,jdbcType=VARCHAR}, #{iCreatetime,jdbcType=TIMESTAMP}, #{iState,jdbcType=BIT}
+      )
+  </insert>
+  
+  <select id="selectPageList" parameterType="Page" resultMap="infoResultMap">
+  	select i_id, i_type, i_source, 
+      i_title, i_content, i_memo, 
+      i_creator, i_createtime, i_state
+    from info
+  	<where>
+		<if test="keyEntity.iTitle!=null">
+			i_title like "%"#{keyEntity.iTitle}"%"
+		</if> 
+	</where>
+	order by i_title asc
+	limit #{startIndex},#{pageSize}
+  </select>
+  
+  <select id="selectRecordsCount" resultType="Int">
+ 	select count(1) from info
+ 	<where>
+		<if test="keyEntity.iTitle!=null">
+			i_title like "%"#{keyEntity.iTitle}"%"
+		</if> 
+	</where>
+  </select>
+  
+  <!-- 根据主键删除单个对象 -->
+  <delete id="delete" parameterType="String" >
+    delete from info
+    where i_id = #{iId,jdbcType=VARCHAR}
+  </delete>
+  
+   
+  <!-- 根据主键数组批量删除 -->
+  <delete id="deleteAll">
+  	delete from info where i_id in 
+  	<foreach collection="array" open="(" close=")" separator="," item="deletedInfo">
+  		#{deletedInfo}
+  	</foreach>
+  </delete>
+  <!-- 根据主键查找对象 -->
+  <select id="select" parameterType="String" resultMap="infoResultMap">
+  	select i_id, i_type, i_source, 
+      i_title, i_content, i_memo, 
+      i_creator, i_createtime, i_state
+    from info
+    where i_id = #{Iid}
+  </select>
+  
+  <!-- 根据主键更新对象 -->
+   <update id="update" parameterType="Info" >
+    update info
+    set i_type = #{iType,jdbcType=VARCHAR},
+      i_source = #{iSource,jdbcType=VARCHAR},
+      i_title = #{iTitle,jdbcType=VARCHAR},
+      i_content = #{iContent,jdbcType=VARCHAR},
+      i_memo = #{iMemo,jdbcType=VARCHAR},
+      i_creator = #{iCreator,jdbcType=VARCHAR},
+      i_createtime = #{iCreatetime,jdbcType=TIMESTAMP},
+      i_state = #{iState,jdbcType=BIT}
+    where i_id = #{iId,jdbcType=VARCHAR}
+  </update>
+</mapper>

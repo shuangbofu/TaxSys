@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.BlackHumour.TaxSys.role.dao.RoleMapper" >
+  <resultMap id="roleResultMap" type="cn.BlackHumour.TaxSys.role.entity.Role" >
+    <id column="r_id" property="rId" jdbcType="VARCHAR" />
+    <result column="r_name" property="rName" jdbcType="VARCHAR" />
+    <result column="r_state" property="rState" jdbcType="BIT" />
+    
+  </resultMap>
+<resultMap type="cn.BlackHumour.TaxSys.role.entity.Role" id="rolePrivilegeMap" extends="roleResultMap">
+	<collection property="privileges" ofType="cn.BlackHumour.TaxSys.privilege.entity.Privilege">
+		<id column="p_code" property="pCode" jdbcType="VARCHAR" />
+    	<result column="p_name" property="pName" jdbcType="VARCHAR" />
+	</collection>
+	<collection property="users" ofType="cn.BlackHumour.TaxSys.user.entity.User">
+		<result column="u_account" property="uAccount" jdbcType="VARCHAR" />
+	    <result column="u_name" property="uName" jdbcType="VARCHAR" />
+	    <result column="u_password" property="uPassword" jdbcType="VARCHAR" />
+	    <result column="u_headImg" property="uHeadimg" jdbcType="VARCHAR" />
+	    <result column="u_gender" property="uGender" jdbcType="BIT" />
+	    <result column="u_state" property="uState" jdbcType="VARCHAR" />
+	    <result column="u_mobile" property="uMobile" jdbcType="VARCHAR" />
+	    <result column="u_email" property="uEmail" jdbcType="VARCHAR" />
+	    <result column="u_birthday" property="uBirthday" jdbcType="DATE" />
+	    <result column="u_memo" property="uMemo" jdbcType="VARCHAR" />
+	</collection>
+</resultMap>  								
+  
+  <!-- 新增单个角色对象 -->
+  <insert id="insert" parameterType="Role" >
+    insert into role (r_id, r_name, r_state)
+    values (#{rId,jdbcType=VARCHAR}, #{rName}, #{rState,jdbcType=BIT});
+  </insert>
+  
+  
+  <!-- 根据关键字查找角色 -->
+  <select id="selectByKey" parameterType="String" resultMap="rolePrivilegeMap">
+  	select r.r_id, r.r_name, r.r_state, p.p_code, p.p_name
+  	from role r, role_privilege rp, privilege p
+  	where r.r_id = rp.r_id
+  	and p.p_code = rp.p_code 
+	and r.r_name like #{rName}
+  </select>
+  
+  <!-- 根据主键更新角色对象信息 -->
+  <update id="update" parameterType="String">
+  	update role
+  	set 
+  	r_name = #{rName},
+  	r_state = #{rState} 
+  	where r_id = #{rId};
+  </update>
+ <!--  
+  更新角色表与权限表之间的关系
+  <update id="updateRelation">
+  	update role_privilege
+  	set p_code = #{pCode}
+  	where id=
+  
+  </update> -->
+  <!-- 根据主键获取角色对应权限 -->
+  <select id="getPrivileges" parameterType="Role" resultMap="cn.BlackHumour.TaxSys.privilege.dao.PrivilegeMapper.privilegeResultMap">
+		select p.p_name,p.p_code 
+		from privilege as p 
+		left join role_privilege as rp on rp.p_code = p.p_code 
+		left join role as r on rp.r_id = r.r_id 
+		where r.r_id = #{rId} and r.r_state = 1
+		order by p.p_code
+  </select>
+  
+  
+  
+  <!-- 通过角色ID和权限编码添加角色表与权限表之间的关系 -->
+  <insert id="insertRelation">
+  	
+	insert into role_privilege(r_id, p_code)
+	values
+  	<foreach collection="param2" item="pCode" separator=",">
+		(#{0},#{pCode})
+  	</foreach>
+  </insert>
+  <!-- 删除角色表与权限表之间的关系 -->
+  <delete id="deleteRelation" parameterType="String">
+  	delete from role_privilege where r_id = #{rId};
+  </delete>
+  
+  <!-- 根据主键查询角色对象 -->
+  <select id="select" parameterType="String" resultMap="rolePrivilegeMap">
+  	select r.r_id, r.r_name, r.r_state, p.p_code, p.p_name
+  	from role r 
+  	left join role_privilege rp on r.r_id = rp.r_id
+  	left join privilege p on p.p_code = rp.p_code
+  	where r.r_id = #{rId};
+  </select>
+  
+  <!-- 查询所有角色对象 -->
+  <select id="selectAll" resultMap="rolePrivilegeMap">
+  	select r.r_id, r.r_name, r.r_state, p.p_code, p.p_name
+  	from role r, role_privilege rp, privilege p
+  	where r.r_id = rp.r_id
+  	and p.p_code = rp.p_code;
+  </select>
+ 
+ <!-- 根据主键删除角色对象 -->
+ <delete id="delete">
+ 	delete from role where r_id = #{rId};
+ </delete>
+ 
+ <!-- 根据主键数组批量删除角色对象 -->
+   <!-- 根据主键数组批量删除 -->
+  <delete id="deleteAll">
+  	delete from role where r_id in 
+  	<foreach collection="array" open="(" close=")" separator="," item="deletedRoles">
+  		#{deletedRoles}
+  	</foreach>
+  </delete>
+ 
+ 
+ 
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.BlackHumour.TaxSys.dept.dao.DeptMapper" >
+  <resultMap id="deptResultMap" type="cn.BlackHumour.TaxSys.dept.entity.Dept" >
+    <id column="d_id" property="dId" jdbcType="VARCHAR" />
+    <result column="d_name" property="dName" jdbcType="VARCHAR" />
+    
+    <collection property="users" ofType="cn.BlackHumour.TaxSys.user.entity.User">
+    	<result column="u_account" property="uAccount" jdbcType="VARCHAR" />
+    <result column="u_name" property="uName" jdbcType="VARCHAR" />
+    <result column="u_password" property="uPassword" jdbcType="VARCHAR" />
+    <result column="u_headImg" property="uHeadimg" jdbcType="VARCHAR" />
+    <result column="u_gender" property="uGender" jdbcType="BIT" />
+    <result column="u_state" property="uState" jdbcType="VARCHAR" />
+    <result column="u_mobile" property="uMobile" jdbcType="VARCHAR" />
+    <result column="u_email" property="uEmail" jdbcType="VARCHAR" />
+    <result column="u_birthday" property="uBirthday" jdbcType="DATE" />
+    <result column="u_memo" property="uMemo" jdbcType="VARCHAR" />
+    </collection>
+    										
+  </resultMap>
+  
+  <select id="selectAll" resultMap="deptResultMap">
+  	select d_id, d_name from dept
+  </select>
+</mapper>
